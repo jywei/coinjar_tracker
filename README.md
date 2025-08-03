@@ -82,11 +82,10 @@ The application integrates with the CoinJar Exchange API:
 
 ### Viewing Price History
 1. Click "View History" for any currency
-2. Browse through paginated price snapshots
-3. View detailed price information including spreads
+2. View detailed price information including spreads
 
 ### All Price History
-1. Click "View All Price History" from the main page
+1. Click "View All Price History" from the home page
 2. See all captured prices across all currencies
 3. Navigate through pages of historical data
 
@@ -104,42 +103,24 @@ bin/rails test
 - **Model Tests**: Validations, associations, scopes, and methods
 - **Service Tests**: API integration, error handling, data processing
 - **Controller Tests**: HTTP responses, caching, pagination
-- **Integration Tests**: End-to-end functionality
 
 ## Performance Features
 
 ### Caching Strategy
-- **Currency List**: Cached for 5 minutes with automatic invalidation
-- **Price Data**: Intelligent caching with cache key management
+- **Currency List**: Cached with automatic invalidation
 - **Cache Invalidation**: Automatic cache clearing on price updates
-
-### Database Optimization
-- **Indexes**: Proper indexing on frequently queried columns
-- **Eager Loading**: Optimized queries with includes
-- **Pagination**: Efficient pagination for large datasets
 
 ### Error Handling
 - **API Failures**: Graceful handling of network and API errors
 - **Partial Failures**: Continue processing when some currencies fail
-- **User Feedback**: Clear error messages and status updates
 
 ## Architecture Decisions
 
 ### Service Layer Pattern
-- **PriceCaptureService**: Focuses on business logic for price capture operations
-- **CoinjarApiClient**: Dedicated HTTP client for API communication
+- **PriceCaptureService**: Focuses on business logic for price capturing
+- **CoinjarApiClient**: Dedicated HTTP client for API calls
 - **Separation of Concerns**: Clear separation between API communication and business logic
-- **Error Handling**: Centralized error handling with custom error classes
-
-### Model Design
-- **Validations**: Comprehensive data validation
-- **Scopes**: Reusable query scopes for common operations
-- **Methods**: Business logic methods for price calculations
-
-### Controller Design
-- **RESTful Routes**: Standard RESTful routing
-- **Caching**: Strategic caching for performance
-- **Error Handling**: User-friendly error messages
+- **Error Handling**: Used custom error classes for clearer error logging
 
 ## 🤖 AI Assistance
 
