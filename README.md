@@ -1,23 +1,21 @@
 # CoinJar Price Tracker
 
-A Ruby on Rails web application that tracks and displays cryptocurrency prices from the CoinJar Exchange API. The application captures real-time prices for Bitcoin (BTC) and Ethereum (ETH) and provides a comprehensive price history with advanced features like caching and pagination.
+A Ruby on Rails web application that tracks and displays cryptocurrency prices from the CoinJar Exchange API. The application captures real-time prices for Bitcoin (BTC) and Ethereum (ETH) and provides a price history.
 
 ## Features
 
 ### Core Functionality
 - **Real-time Price Capture**: Fetch current prices from CoinJar Exchange API
 - **Price History**: View historical price data with pagination
-- **Multiple Currencies**: Support for BTC and ETH with easy extensibility
 - **Price Details**: Display last, bid, ask prices with spread calculations
 
 ### Performance Optimizations
 - **Caching**: Intelligent caching of currency lists and price data
 - **Pagination**: Efficient pagination for large datasets
-- **Database Optimization**: Proper indexing and query optimization
 - **Error Handling**: Robust error handling for API failures
 
 ### User Interface
-- **Responsive Design**: Bootstrap-based responsive UI
+- **Responsive Design**: Bootstrap responsive UI
 - **Real-time Updates**: Capture button for immediate price updates
 - **Navigation**: Easy navigation between currencies and history
 - **Data Visualization**: Clear presentation of price data and trends
@@ -38,7 +36,7 @@ The application integrates with the CoinJar Exchange API:
 - **Endpoint**: `https://data.exchange.coinjar.com/products/{SYMBOL}/ticker`
 - **Supported Symbols**: BTCAUD, ETHAUD
 - **Data Captured**: last, bid, ask prices
-- **Error Handling**: Comprehensive error handling for network issues, timeouts, and API errors
+- **Error Handling**: Error handling for network issues, timeouts, and API errors
 
 ## Installation & Setup
 
@@ -75,13 +73,6 @@ The application integrates with the CoinJar Exchange API:
 5. **Visit the application**
    Open http://localhost:3000 in your browser
 
-### Docker Setup
-
-1. **Build and run with Docker**
-   ```bash
-   docker build -t coinjar_tracker .
-   docker run -p 3000:3000 coinjar_tracker
-   ```
 
 ## Usage
 
@@ -101,23 +92,6 @@ The application integrates with the CoinJar Exchange API:
 2. See all captured prices across all currencies
 3. Navigate through pages of historical data
 
-## Database Schema
-
-### Currencies Table
-- `id`: Primary key
-- `name`: Currency name (e.g., "Bitcoin")
-- `symbol`: API symbol (e.g., "BTCAUD")
-- `created_at`, `updated_at`: Timestamps
-
-### Price Snapshots Table
-- `id`: Primary key
-- `currency_id`: Foreign key to currencies
-- `last`: Last traded price
-- `bid`: Best bid price
-- `ask`: Best ask price
-- `captured_at`: Timestamp when price was captured
-- `created_at`, `updated_at`: Timestamps
-
 ## Testing
 
 The application includes comprehensive test coverage:
@@ -126,11 +100,6 @@ The application includes comprehensive test coverage:
 ```bash
 # Run all tests
 bin/rails test
-
-# Run specific test files
-bin/rails test test/models/currency_test.rb
-bin/rails test test/services/price_capture_service_test.rb
-bin/rails test test/controllers/currencies_controller_test.rb
 ```
 
 ### Test Coverage
@@ -184,49 +153,57 @@ This project was developed with the assistance of AI tools, specifically:
 ### AI Contributions
 - **Initial Scaffolding**: AI helped generate the basic Rails application structure
 - **Service Design**: AI suggested the service layer pattern for API integration
-- **Error Handling**: AI provided guidance on robust error handling strategies
 - **Testing Strategy**: AI helped design comprehensive test coverage
 - **Performance Optimization**: AI suggested caching and pagination strategies
 
-### Manual Refinements
-- **Code Quality**: Manual review and refinement of all AI-generated code
-- **Architecture Decisions**: Final architectural decisions made after careful consideration
-- **Testing**: Comprehensive manual testing and test case development
-- **Documentation**: Manual creation of detailed documentation
+## 🚀 Optional Enhancements (Not Implemented)
 
-### Learning Outcomes
-- **Best Practices**: Understanding of Rails best practices and patterns
-- **Error Handling**: Improved knowledge of robust error handling in web applications
-- **Performance**: Better understanding of caching and optimization strategies
-- **Testing**: Enhanced testing skills with comprehensive coverage
+The original challenge included several optional enhancements. I chose to implement **Performance Optimizations** (caching and pagination), but here are the other enhancements and how we would approach implementing them:
 
-## Deployment
+### 1. Price Alerts
+**Description**: Allow users to set price thresholds and notify when crossed
 
-### Production Deployment
-The application is configured for deployment using Kamal:
+**Required Components**:
+- Database migration for `price_alerts` table
+- Alert creation/deletion/edition pages
+- Service to check alerts after price captures
+- Notifications like email or SMS (or push notification)
 
-```bash
-# Deploy to production
-bin/kamal deploy
-```
+### 2. Price Visualization
+**Description**: Add a simple chart showing price trends over time
+
+**Required Components**:
+- Chartkick gem https://github.com/ankane/chartkick integration
+
+### 3. Additional Currencies
+**Description**: Expand beyond BTC and ETH to include other cryptocurrencies
+
+**Required Components**:
+- Update seed data with more currencies
+- Rate limit if necessary
+
+### 4. Scheduled Updates
+**Description**: Add automated price captures at regular intervals
+
+**Required Components**:
+- Background job (Sidekiq or Active Job)
+- Cron scheduling with whenever gem https://github.com/javan/whenever
+
+### 5. Advanced Performance Optimizations
+**Description**: Implement additional caching and pagination improvements
+
+**Required Components**:
+- Redis server
+- Database index
+- Performance monitoring tools
+
+### Technical Considerations
+
+- **API Rate Limits**: CoinJar API has rate limits that need to be respected
+- **Data Storage**: Large datasets require careful database design
+- **Real-time Updates**: WebSocket integration for live price updates
+- **Mobile Responsiveness**: Charts and alerts need mobile-friendly design
 
 ### Environment Variables
 - `DATABASE_URL`: PostgreSQL connection string
 - `RAILS_ENV`: Environment (development, production, test)
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests for new functionality
-5. Ensure all tests pass
-6. Submit a pull request
-
-## License
-
-This project is licensed under the MIT License.
-
-## Support
-
-For support or questions, please open an issue in the repository.
