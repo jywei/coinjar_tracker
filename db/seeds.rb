@@ -83,9 +83,7 @@ eth_prices.each do |price_data|
 end
 
 puts "Seed data created successfully!"
-puts "Created #{btc_prices.length} Bitcoin price snapshots"
-puts "Created #{eth_prices.length} Ethereum price snapshots"
-puts "Total: #{btc_prices.length + eth_prices.length} price snapshots"
-puts ""
-puts "You can now run the application and see realistic historical price data."
-puts "Use the 'Capture Latest Prices' button to fetch current prices from the API."
+puts "Created #{btc_prices.size} Bitcoin price snapshots"
+puts "Created #{eth_prices.size} Ethereum price snapshots"
+puts "Total: #{btc_prices.size + eth_prices.size} price snapshots"
+puts "Can now run the application and see default historical price data."
