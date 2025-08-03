@@ -182,7 +182,3 @@ The original challenge included several optional enhancements. I chose to implem
 - **Data Storage**: Large datasets require careful database design
 - **Real-time Updates**: WebSocket integration for live price updates
 - **Mobile Responsiveness**: Charts and alerts need mobile-friendly design
-
-### Environment Variables
-- `DATABASE_URL`: PostgreSQL connection string
-- `RAILS_ENV`: Environment (development, production, test)
