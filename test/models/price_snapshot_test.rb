@@ -2,7 +2,6 @@ require "test_helper"
 
 class PriceSnapshotTest < ActiveSupport::TestCase
   def setup
-    # Clear all data to avoid conflicts with fixtures
     PriceSnapshot.destroy_all
     Currency.destroy_all
     
@@ -21,12 +20,14 @@ class PriceSnapshotTest < ActiveSupport::TestCase
 
   test "currency should be present" do
     @snapshot.currency = nil
+
     assert_not @snapshot.valid?
     assert_includes @snapshot.errors[:currency], "must exist"
   end
 
   test "last should be present" do
     @snapshot.last = nil
+
     assert_not @snapshot.valid?
     assert_includes @snapshot.errors[:last], "can't be blank"
   end
@@ -44,6 +45,7 @@ class PriceSnapshotTest < ActiveSupport::TestCase
 
   test "bid should be present" do
     @snapshot.bid = nil
+
     assert_not @snapshot.valid?
     assert_includes @snapshot.errors[:bid], "can't be blank"
   end
@@ -61,6 +63,7 @@ class PriceSnapshotTest < ActiveSupport::TestCase
 
   test "ask should be present" do
     @snapshot.ask = nil
+
     assert_not @snapshot.valid?
     assert_includes @snapshot.errors[:ask], "can't be blank"
   end
@@ -78,6 +81,7 @@ class PriceSnapshotTest < ActiveSupport::TestCase
 
   test "should set captured_at automatically" do
     @snapshot.save!
+
     assert_not_nil @snapshot.captured_at
     assert_in_delta Time.current, @snapshot.captured_at, 1.second
   end
@@ -86,38 +90,40 @@ class PriceSnapshotTest < ActiveSupport::TestCase
     custom_time = 1.hour.ago
     @snapshot.captured_at = custom_time
     @snapshot.save!
+
     assert_equal custom_time, @snapshot.reload.captured_at
   end
 
   test "spread should calculate correctly" do
     @snapshot.save!
+
     expected_spread = @snapshot.ask - @snapshot.bid
     assert_equal expected_spread, @snapshot.spread
   end
 
   test "spread_percentage should calculate correctly" do
     @snapshot.save!
+
     expected_percentage = ((@snapshot.ask - @snapshot.bid) / @snapshot.bid * 100).round(2)
     assert_equal expected_percentage, @snapshot.spread_percentage
   end
 
   test "spread_percentage should handle zero bid" do
-    @snapshot.bid = 0.01 # Use small positive value instead of zero
+    @snapshot.bid = 0.01
     @snapshot.save!
-    # This should still work with very small bid values
+
     assert @snapshot.spread_percentage >= 0
   end
 
   test "formatted_captured_at should format correctly" do
     @snapshot.captured_at = Time.new(2023, 12, 25, 14, 30, 45)
     @snapshot.save!
-    # Account for timezone differences in test environment
+
     expected_time = @snapshot.captured_at.strftime('%Y-%m-%d %H:%M:%S')
     assert_equal expected_time, @snapshot.formatted_captured_at
   end
 
   test "recent scope should order by captured_at desc" do
-    # Clear existing data to avoid conflicts
     @currency.price_snapshots.destroy_all
     
     old_snapshot = @currency.price_snapshots.create!(
