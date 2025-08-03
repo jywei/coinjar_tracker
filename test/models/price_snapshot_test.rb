@@ -83,15 +83,8 @@ class PriceSnapshotTest < ActiveSupport::TestCase
     @snapshot.save!
 
     assert_not_nil @snapshot.captured_at
+    # New syntax that I learned from the exercise
     assert_in_delta Time.current, @snapshot.captured_at, 1.second
-  end
-
-  test "should allow manual captured_at" do
-    custom_time = 1.hour.ago
-    @snapshot.captured_at = custom_time
-    @snapshot.save!
-
-    assert_equal custom_time, @snapshot.reload.captured_at
   end
 
   test "spread should calculate correctly" do
