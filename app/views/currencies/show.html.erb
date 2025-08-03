@@ -41,8 +41,10 @@
         </table>
         
         <!-- Pagination -->
-        <div class="d-flex justify-content-center">
-          <%= paginate @price_snapshots %>
+        <div class="d-flex justify-content-center mt-4">
+          <nav aria-label="Price history pagination">
+            <%= paginate @price_snapshots, theme: 'bootstrap5', window: 2 %>
+          </nav>
         </div>
       </div>
     </div>
