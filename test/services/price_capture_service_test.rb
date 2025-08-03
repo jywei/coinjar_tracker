@@ -33,7 +33,7 @@ class PriceCaptureServiceTest < ActiveSupport::TestCase
     assert_not_nil snapshot.captured_at
   end
 
-  test "#capture_for_currency should handle string numeric values" do
+  test "#capture_for_currency should handle string values" do
     mock_response = {
       "last" => "50000.50",
       "bid" => "49900.25",
@@ -122,7 +122,7 @@ class PriceCaptureServiceTest < ActiveSupport::TestCase
       "bid" => "49900.00",
       "ask" => "50100.00"
     }
-    
+
     stub_request(:get, /coinjar/).to_return(
       status: 200,
       body: invalid_data.to_json
