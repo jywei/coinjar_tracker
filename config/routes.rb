@@ -11,14 +11,14 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   root "currencies#index"
-  
+
   # Currency routes
-  resources :currencies, only: [:index, :show] do
+  resources :currencies, only: [ :index, :show ] do
     collection do
       post :capture_prices
     end
   end
-  
+
   # Price snapshots routes
-  resources :price_snapshots, only: [:index]
+  resources :price_snapshots, only: [ :index ]
 end

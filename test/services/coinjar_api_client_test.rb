@@ -11,15 +11,15 @@ class CoinjarApiClientTest < ActiveSupport::TestCase
       "bid" => "49900.00",
       "ask" => "50100.00"
     }
-    
+
     stub_request(:get, /coinjar/).to_return(
       status: 200,
       body: mock_response.to_json,
-      headers: { 'Content-Type' => 'application/json' }
+      headers: { "Content-Type" => "application/json" }
     )
 
     result = @client.fetch_ticker("BTCAUD")
-    
+
     assert_equal "50000.00", result["last"]
     assert_equal "49900.00", result["bid"]
     assert_equal "50100.00", result["ask"]
@@ -31,14 +31,14 @@ class CoinjarApiClientTest < ActiveSupport::TestCase
       "bid" => "49900.25",
       "ask" => "50100.75"
     }
-    
+
     stub_request(:get, /coinjar/).to_return(
       status: 200,
       body: mock_response.to_json
     )
 
     result = @client.fetch_ticker("BTCAUD")
-    
+
     assert_equal "50000.50", result["last"]
     assert_equal "49900.25", result["bid"]
     assert_equal "50100.75", result["ask"]
@@ -50,14 +50,14 @@ class CoinjarApiClientTest < ActiveSupport::TestCase
       "bid" => 49900.25,
       "ask" => 50100.75
     }
-    
+
     stub_request(:get, /coinjar/).to_return(
       status: 200,
       body: mock_response.to_json
     )
 
     result = @client.fetch_ticker("BTCAUD")
-    
+
     assert_equal 50000.50, result["last"]
     assert_equal 49900.25, result["bid"]
     assert_equal 50100.75, result["ask"]
@@ -89,7 +89,7 @@ class CoinjarApiClientTest < ActiveSupport::TestCase
 
   test "should raise InvalidResponseError for missing required fields, bid and ask" do
     mock_response = { "last" => "50000.00" }
-    
+
     stub_request(:get, /coinjar/).to_return(
       status: 200,
       body: mock_response.to_json
@@ -106,7 +106,7 @@ class CoinjarApiClientTest < ActiveSupport::TestCase
       "bid" => "49900.00",
       "ask" => "50100.00"
     }
-    
+
     stub_request(:get, /coinjar/).to_return(
       status: 200,
       body: mock_response.to_json
@@ -150,14 +150,14 @@ class CoinjarApiClientTest < ActiveSupport::TestCase
       "bid" => "49900.00",
       "ask" => "50100.00"
     }
-    
+
     stub_request(:get, /coinjar/).to_return(
       status: 200,
       body: mock_response.to_json
     )
 
     result = CoinjarApiClient.fetch_ticker("BTCAUD")
-    
+
     assert_equal "50000.00", result["last"]
     assert_equal "49900.00", result["bid"]
     assert_equal "50100.00", result["ask"]
@@ -165,14 +165,14 @@ class CoinjarApiClientTest < ActiveSupport::TestCase
 
   test "should construct correct API URL" do
     expected_url = "https://data.exchange.coinjar.com/products/BTCAUD/ticker"
-    
+
     stub_request(:get, expected_url).to_return(
       status: 200,
       body: { "last" => "50000.00", "bid" => "49900.00", "ask" => "50100.00" }.to_json
     )
 
     @client.fetch_ticker("BTCAUD")
-    
+
     assert_requested :get, expected_url
   end
-end 
+end

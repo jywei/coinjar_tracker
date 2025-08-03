@@ -34,7 +34,7 @@ btc_prices = [
   { last: 165800, bid: 165100, ask: 165900, hours_ago: 132 },
   { last: 165200, bid: 164500, ask: 165300, hours_ago: 144 },
   { last: 164500, bid: 163800, ask: 164600, hours_ago: 156 },
-  { last: 163800, bid: 163100, ask: 163900, hours_ago: 168 },
+  { last: 163800, bid: 163100, ask: 163900, hours_ago: 168 }
 ]
 
 eth_prices = [
@@ -59,7 +59,7 @@ eth_prices = [
   { last: 5260, bid: 5264, ask: 5274, hours_ago: 132 },
   { last: 5255, bid: 5259, ask: 5269, hours_ago: 144 },
   { last: 5250, bid: 5254, ask: 5264, hours_ago: 156 },
-  { last: 5245, bid: 5249, ask: 5259, hours_ago: 168 },
+  { last: 5245, bid: 5249, ask: 5259, hours_ago: 168 }
 ]
 
 btc_prices.each do |price_data|

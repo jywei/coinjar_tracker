@@ -42,16 +42,16 @@ class CurrencyTest < ActiveSupport::TestCase
   test "symbol should match format" do
     currency = Currency.new(name: "Test", symbol: "btc")
     assert_not currency.valid?
-    
+
     currency.symbol = "BT"
     assert_not currency.valid?
-    
+
     currency.symbol = "BTC"
     assert currency.valid?
-    
+
     currency.symbol = "BTCAUD"
     assert currency.valid?
-    
+
     currency.symbol = "BTCAUD12345"
     assert_not currency.valid?
   end
@@ -71,7 +71,7 @@ class CurrencyTest < ActiveSupport::TestCase
     new_snapshot = @currency.price_snapshots.create!(
       last: 51000, bid: 50900, ask: 51100, captured_at: Time.current
     )
-    
+
     assert_equal new_snapshot, @currency.latest_price
   end
 
@@ -81,7 +81,7 @@ class CurrencyTest < ActiveSupport::TestCase
     @currency.price_snapshots.create!(
       last: 50000, bid: 49900, ask: 50100, captured_at: Time.current
     )
-    
+
     assert_equal 50000, @currency.latest_price_value
   end
 
@@ -93,10 +93,10 @@ class CurrencyTest < ActiveSupport::TestCase
 
   test "ordered scope should order by name" do
     Currency.destroy_all
-    
+
     eth = Currency.create!(name: "Ethereum", symbol: "ETHAUD")
     btc = Currency.create!(name: "Bitcoin", symbol: "BTCAUD")
-    
+
     ordered_currencies = Currency.ordered
     assert_equal btc, ordered_currencies.first
     assert_equal eth, ordered_currencies.last

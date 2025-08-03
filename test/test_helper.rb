@@ -3,7 +3,7 @@ require_relative "../config/environment"
 require "rails/test_help"
 
 # Configure WebMock for HTTP request mocking
-require 'webmock/minitest'
+require "webmock/minitest"
 
 class ActiveSupport::TestCase
   # Run tests in parallel with specified workers

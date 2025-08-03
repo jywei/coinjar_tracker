@@ -4,7 +4,7 @@ class PriceCaptureServiceTest < ActiveSupport::TestCase
   def setup
     PriceSnapshot.destroy_all
     Currency.destroy_all
-    
+
     @currency = Currency.create!(name: "Bitcoin", symbol: "BTCAUD")
     @service = PriceCaptureService.new
   end
@@ -12,16 +12,16 @@ class PriceCaptureServiceTest < ActiveSupport::TestCase
   test "#capture_for_currency should create price snapshot" do
     mock_response = {
       "last" => "50000.00",
-      "bid" => "49900.00", 
+      "bid" => "49900.00",
       "ask" => "50100.00"
     }
-    
+
     stub_request(:get, /coinjar/).to_return(
       status: 200,
       body: mock_response.to_json
     )
 
-    assert_difference 'PriceSnapshot.count', 1 do
+    assert_difference "PriceSnapshot.count", 1 do
       @service.capture_for_currency(@currency)
     end
 
@@ -39,14 +39,14 @@ class PriceCaptureServiceTest < ActiveSupport::TestCase
       "bid" => "49900.25",
       "ask" => "50100.75"
     }
-    
+
     stub_request(:get, /coinjar/).to_return(
       status: 200,
       body: mock_response.to_json
     )
 
     @service.capture_for_currency(@currency)
-    
+
     snapshot = PriceSnapshot.last
     assert_equal 50000.50, snapshot.last
     assert_equal 49900.25, snapshot.bid
@@ -59,14 +59,14 @@ class PriceCaptureServiceTest < ActiveSupport::TestCase
       "bid" => 49900.25,
       "ask" => 50100.75
     }
-    
+
     stub_request(:get, /coinjar/).to_return(
       status: 200,
       body: mock_response.to_json
     )
 
     @service.capture_for_currency(@currency)
-    
+
     snapshot = PriceSnapshot.last
     assert_equal 50000.50, snapshot.last
     assert_equal 49900.25, snapshot.bid
@@ -76,21 +76,21 @@ class PriceCaptureServiceTest < ActiveSupport::TestCase
   test "#capture_all should capture for all currencies" do
     PriceSnapshot.destroy_all
     eth_currency = Currency.create!(name: "Ethereum", symbol: "ETHAUD")
-    
+
     mock_response = {
       "last" => "50000.00",
       "bid" => "49900.00",
       "ask" => "50100.00"
     }
-    
+
     stub_request(:get, /coinjar/).to_return(
       status: 200,
       body: mock_response.to_json
     )
 
-    assert_difference 'PriceSnapshot.count', 2 do
+    assert_difference "PriceSnapshot.count", 2 do
       results = @service.capture_all
-      
+
       assert_includes results[:success], "BTCAUD"
       assert_includes results[:success], "ETHAUD"
       assert_empty results[:errors]
@@ -100,16 +100,16 @@ class PriceCaptureServiceTest < ActiveSupport::TestCase
   test "#capture_all should handle partial failures" do
     PriceSnapshot.destroy_all
     eth_currency = Currency.create!(name: "Ethereum", symbol: "ETHAUD")
-    
+
     stub_request(:get, /BTCAUD/).to_return(
       status: 200,
       body: { "last" => "50000.00", "bid" => "49900.00", "ask" => "50100.00" }.to_json
     )
-    
+
     stub_request(:get, /ETHAUD/).to_return(status: 404)
 
     results = @service.capture_all
-    
+
     assert_includes results[:success], "BTCAUD"
     assert_not_includes results[:success], "ETHAUD"
     assert_equal 1, results[:errors].length
@@ -147,7 +147,7 @@ class PriceCaptureServiceTest < ActiveSupport::TestCase
       "bid" => "49900.00",
       "ask" => "50100.00"
     }
-    
+
     stub_request(:get, /coinjar/).to_return(
       status: 200,
       body: mock_response.to_json
@@ -159,4 +159,4 @@ class PriceCaptureServiceTest < ActiveSupport::TestCase
       @service.capture_for_currency(@currency)
     end
   end
-end 
+end
