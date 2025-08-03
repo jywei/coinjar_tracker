@@ -109,7 +109,7 @@ class PriceSnapshotTest < ActiveSupport::TestCase
   end
 
   test "formatted_captured_at should format correctly" do
-    @snapshot.captured_at = Time.new(2023, 12, 25, 14, 30, 45)
+    @snapshot.captured_at = Time.new(2025, 8, 3, 14, 30, 45)
     @snapshot.save!
 
     expected_time = @snapshot.captured_at.strftime("%Y-%m-%d %H:%M:%S")
