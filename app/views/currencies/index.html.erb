@@ -1,0 +1,92 @@
+<div class="container">
+  <h1>CoinJar Price Tracker</h1>
+  
+  <!-- Flash Messages -->
+  <% if notice %>
+    <div class="alert alert-success">
+      <%= notice %>
+    </div>
+  <% end %>
+  
+  <% if alert %>
+    <div class="alert alert-danger">
+      <%= alert %>
+    </div>
+  <% end %>
+  
+  <!-- Capture Button -->
+  <div class="mb-4">
+    <%= button_to "Capture Latest Prices", capture_prices_currencies_path, 
+                  method: :post, 
+                  class: "btn btn-primary",
+                  data: { confirm: "This will fetch the latest prices from CoinJar API. Continue?" } %>
+  </div>
+  
+  <!-- Currencies Table -->
+  <div class="card">
+    <div class="card-header">
+      <h2>Current Prices</h2>
+    </div>
+    <div class="card-body">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Currency</th>
+            <th>Symbol</th>
+            <th>Last Price</th>
+            <th>Bid</th>
+            <th>Ask</th>
+            <th>Last Updated</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @currencies.each do |currency_data| %>
+            <% currency = currency_data[:currency] %>
+            <% latest_price = currency_data[:latest_price] %>
+            <tr>
+              <td><strong><%= currency.name %></strong></td>
+              <td><code><%= currency.symbol %></code></td>
+              <td>
+                <% if latest_price %>
+                  <span class="text-success">$<%= number_with_precision(latest_price.last, precision: 2) %></span>
+                <% else %>
+                  <span class="text-muted">No data</span>
+                <% end %>
+              </td>
+              <td>
+                <% if latest_price %>
+                  $<%= number_with_precision(latest_price.bid, precision: 2) %>
+                <% else %>
+                  <span class="text-muted">-</span>
+                <% end %>
+              </td>
+              <td>
+                <% if latest_price %>
+                  $<%= number_with_precision(latest_price.ask, precision: 2) %>
+                <% else %>
+                  <span class="text-muted">-</span>
+                <% end %>
+              </td>
+              <td>
+                <% if latest_price %>
+                  <small><%= latest_price.formatted_captured_at %></small>
+                <% else %>
+                  <span class="text-muted">Never</span>
+                <% end %>
+              </td>
+              <td>
+                <%= link_to "View History", currency_path(currency), class: "btn btn-sm btn-outline-primary" %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  
+  <!-- Additional Links -->
+  <div class="mt-4">
+    <%= link_to "View All Price History", price_snapshots_path, class: "btn btn-outline-secondary" %>
+  </div>
+</div>

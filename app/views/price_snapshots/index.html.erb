@@ -1,0 +1,61 @@
+<div class="container">
+  <div class="mb-3">
+    <%= link_to "← Back to Currencies", currencies_path, class: "btn btn-outline-secondary" %>
+  </div>
+  
+  <h1>All Price Snapshots</h1>
+  
+  <% if @price_snapshots.any? %>
+    <div class="card">
+      <div class="card-header">
+        <h2>Price History</h2>
+        <small class="text-muted">Showing <%= @price_snapshots.count %> of <%= @price_snapshots.total_count %> records</small>
+      </div>
+      <div class="card-body">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Currency</th>
+              <th>Last Price</th>
+              <th>Bid</th>
+              <th>Ask</th>
+              <th>Spread</th>
+              <th>Spread %</th>
+              <th>Captured At</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @price_snapshots.each do |snapshot| %>
+              <tr>
+                <td>
+                  <strong><%= snapshot.currency.name %></strong>
+                  <br>
+                  <small class="text-muted"><code><%= snapshot.currency.symbol %></code></small>
+                </td>
+                <td>
+                  <strong class="text-success">$<%= number_with_precision(snapshot.last, precision: 2) %></strong>
+                </td>
+                <td>$<%= number_with_precision(snapshot.bid, precision: 2) %></td>
+                <td>$<%= number_with_precision(snapshot.ask, precision: 2) %></td>
+                <td>$<%= number_with_precision(snapshot.spread, precision: 2) %></td>
+                <td><%= number_with_precision(snapshot.spread_percentage, precision: 2) %>%</td>
+                <td><%= snapshot.formatted_captured_at %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+        
+        <!-- Pagination -->
+        <div class="d-flex justify-content-center">
+          <%= paginate @price_snapshots %>
+        </div>
+      </div>
+    </div>
+  <% else %>
+    <div class="alert alert-info">
+      <h4>No price data available</h4>
+      <p>No price snapshots have been captured yet.</p>
+      <p>Use the "Capture Latest Prices" button on the main page to fetch current prices.</p>
+    </div>
+  <% end %>
+</div>
