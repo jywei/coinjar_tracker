@@ -158,7 +158,7 @@ This project was developed with the assistance of AI tools, specifically:
 
 ## 🚀 Optional Enhancements (Not Implemented)
 
-The original challenge included several optional enhancements. I chose to implement **Performance Optimizations** (caching and pagination), but here are the other enhancements and how we would approach implementing them:
+The original challenge included several optional enhancements. I chose to implement **Performance Optimizations** (caching and pagination), but here are the other enhancements and how I would approach implementing them:
 
 ### 1. Price Alerts
 **Description**: Allow users to set price thresholds and notify when crossed
