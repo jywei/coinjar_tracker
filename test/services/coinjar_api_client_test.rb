@@ -87,8 +87,8 @@ class CoinjarApiClientTest < ActiveSupport::TestCase
     end
   end
 
-  test "should raise InvalidResponseError for missing required fields" do
-    mock_response = { "last" => "50000.00" } # Missing bid and ask
+  test "should raise InvalidResponseError for missing required fields, bid and ask" do
+    mock_response = { "last" => "50000.00" }
     
     stub_request(:get, /coinjar/).to_return(
       status: 200,
