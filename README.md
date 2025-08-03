@@ -151,10 +151,8 @@ This project was developed with the assistance of AI tools, specifically:
 
 ### AI Contributions
 - **Initial Scaffolding**: AI helped generate the basic Rails application structure
-- **Service Design**: AI suggested the service layer pattern for API integration
-- **Separation of Concerns**: AI helped separate API client from business logic
+- **Layout Styling**: AI helped building simple bootstrap layouts
 - **Testing Strategy**: AI helped design comprehensive test coverage
-- **Performance Optimization**: AI suggested caching and pagination strategies
 
 ## 🚀 Optional Enhancements (Not Implemented)
 
