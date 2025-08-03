@@ -1,10 +1,12 @@
 class CurrenciesController < ApplicationController
+  PRICES_CACHE_EXPIRATION = 1.minute
+  PRICES_CACHE_KEY = 'currencies_with_latest_prices'
+  PRICES_SHOWN_PER_PAGE = 20
+
   before_action :set_currency, only: [:show]
   
-  # GET /currencies
-  # GET /
   def index
-    @currencies = Rails.cache.fetch('currencies_with_latest_prices', expires_in: 5.minutes) do
+    @currencies = Rails.cache.fetch(PRICES_CACHE_KEY, expires_in: PRICES_CACHE_EXPIRATION) do
       Currency.includes(:price_snapshots).ordered.map do |currency|
         {
           currency: currency,
@@ -14,12 +16,10 @@ class CurrenciesController < ApplicationController
     end
   end
   
-  # GET /currencies/:id
   def show
-    @price_snapshots = @currency.price_snapshots.recent.page(params[:page]).per(20)
+    @price_snapshots = @currency.price_snapshots.recent.page(params[:page]).per(PRICES_SHOWN_PER_PAGE)
   end
   
-  # POST /currencies/capture_prices
   def capture_prices
     begin
       results = PriceCaptureService.capture_all
@@ -30,8 +30,7 @@ class CurrenciesController < ApplicationController
         flash[:notice] = "Successfully captured prices for all currencies"
       end
       
-      # Clear relevant caches
-      Rails.cache.delete('currencies_with_latest_prices')
+      Rails.cache.delete(PRICES_CACHE_KEY)
       Currency.find_each do |currency|
         Rails.cache.delete_matched(["currency", currency.id, "snapshots", "*"])
       end
@@ -50,6 +49,8 @@ class CurrenciesController < ApplicationController
     @currency = Currency.find(params[:id])
   rescue ActiveRecord::RecordNotFound
     flash[:error] = "Currency not found"
+    Rails.logger.error("Currency not found: #{params[:id]}")
+
     redirect_to currencies_path
   end
 end
