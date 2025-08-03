@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  currency: one
+  last: 9.99
+  bid: 9.99
+  ask: 9.99
+  captured_at: 2025-08-03 13:18:04
+
+two:
+  currency: two
+  last: 9.99
+  bid: 9.99
+  ask: 9.99
+  captured_at: 2025-08-03 13:18:04
