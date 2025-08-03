@@ -128,8 +128,9 @@ bin/rails test
 ## Architecture Decisions
 
 ### Service Layer Pattern
-- **PriceCaptureService**: Encapsulates API interaction logic
-- **Separation of Concerns**: Clear separation between business logic and controllers
+- **PriceCaptureService**: Focuses on business logic for price capture operations
+- **CoinjarApiClient**: Dedicated HTTP client for API communication
+- **Separation of Concerns**: Clear separation between API communication and business logic
 - **Error Handling**: Centralized error handling with custom error classes
 
 ### Model Design
@@ -153,6 +154,7 @@ This project was developed with the assistance of AI tools, specifically:
 ### AI Contributions
 - **Initial Scaffolding**: AI helped generate the basic Rails application structure
 - **Service Design**: AI suggested the service layer pattern for API integration
+- **Separation of Concerns**: AI helped separate API client from business logic
 - **Testing Strategy**: AI helped design comprehensive test coverage
 - **Performance Optimization**: AI suggested caching and pagination strategies
 
