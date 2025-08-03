@@ -28,7 +28,6 @@ A Ruby on Rails web application that tracks and displays cryptocurrency prices f
 - **Pagination**: Kaminari
 - **Testing**: Minitest with WebMock for HTTP mocking
 - **Styling**: Bootstrap 5.3.0
-- **Deployment**: Docker with Kamal
 
 ## API Integration
 
@@ -43,7 +42,6 @@ The application integrates with the CoinJar Exchange API:
 ### Prerequisites
 - Ruby 3.3.0 or higher
 - PostgreSQL
-- Docker (optional)
 
 ### Local Development Setup
 
