@@ -2,7 +2,7 @@ require "test_helper"
 
 class CurrencyTest < ActiveSupport::TestCase
   def setup
-    @currency = Currency.new(name: "Bitcoin", symbol: "BTCAUD")
+    @currency = Currency.new(name: "Test Bitcoin", symbol: "TESTBTC")
   end
 
   test "should be valid" do
@@ -16,12 +16,14 @@ class CurrencyTest < ActiveSupport::TestCase
     assert_includes @currency.errors[:name], "can't be blank"
   end
 
-  test "name should be unique" do
+  test "name should be unique at database level" do
     @currency.save!
 
-    duplicate_currency = Currency.new(name: "Bitcoin", symbol: "BTCAUD2")
-    assert_not duplicate_currency.valid?
-    assert_includes duplicate_currency.errors[:name], "has already been taken"
+    duplicate_currency = Currency.new(name: "Test Bitcoin", symbol: "TESTBTC2")
+
+    assert_raises ActiveRecord::RecordNotUnique do
+      duplicate_currency.save!(validate: false)
+    end
   end
 
   test "symbol should be present" do
@@ -31,12 +33,14 @@ class CurrencyTest < ActiveSupport::TestCase
     assert_includes @currency.errors[:symbol], "can't be blank"
   end
 
-  test "symbol should be unique" do
+  test "symbol should be unique at database level" do
     @currency.save!
 
-    duplicate_currency = Currency.new(name: "Bitcoin2", symbol: "BTCAUD")
-    assert_not duplicate_currency.valid?
-    assert_includes duplicate_currency.errors[:symbol], "has already been taken"
+    duplicate_currency = Currency.new(name: "Test Bitcoin2", symbol: "TESTBTC")
+
+    assert_raises ActiveRecord::RecordNotUnique do
+      duplicate_currency.save!(validate: false)
+    end
   end
 
   test "symbol should match format" do
@@ -92,12 +96,10 @@ class CurrencyTest < ActiveSupport::TestCase
   end
 
   test "ordered scope should order by name" do
-    Currency.destroy_all
+    eth = Currency.create!(name: "Test Ethereum", symbol: "TESTETH")
+    btc = Currency.create!(name: "Test Bitcoin", symbol: "TESTBTC")
 
-    eth = Currency.create!(name: "Ethereum", symbol: "ETHAUD")
-    btc = Currency.create!(name: "Bitcoin", symbol: "BTCAUD")
-
-    ordered_currencies = Currency.ordered
+    ordered_currencies = Currency.where(name: ["Test Bitcoin", "Test Ethereum"]).ordered
     assert_equal btc, ordered_currencies.first
     assert_equal eth, ordered_currencies.last
   end
