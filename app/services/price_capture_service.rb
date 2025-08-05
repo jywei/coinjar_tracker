@@ -15,12 +15,16 @@ class PriceCaptureService
 
     Currency.find_each do |currency|
       capture_for_currency(currency)
-
       results[:success] << currency.symbol
-    rescue StandardError => e
+    rescue CoinjarApiClient::ApiError => e
       results[:errors] << { symbol: currency.symbol, error: e.message }
-
-      Rails.logger.error("Failed to capture price for #{currency.symbol}: #{e.message}")
+      Rails.logger.warn("API error for #{currency.symbol}: #{e.message}")
+    rescue CoinjarApiClient::InvalidResponseError => e
+      results[:errors] << { symbol: currency.symbol, error: e.message }
+      Rails.logger.error("Invalid response for #{currency.symbol}: #{e.message}")
+    rescue ActiveRecord::RecordInvalid => e
+      results[:errors] << { symbol: currency.symbol, error: "Validation failed: #{e.message}" }
+      Rails.logger.error("Validation failed for #{currency.symbol}: #{e.message}")
     end
 
     results
@@ -29,12 +33,9 @@ class PriceCaptureService
   def capture_for_currency(currency)
     # Can potentially use ports and adapters pattern to reduce coupling
     ticker_data = CoinjarApiClient.fetch_ticker(currency.symbol)
-
     create_price_snapshot(currency, ticker_data)
-
+    
     Rails.logger.info("Successfully captured price for #{currency.symbol}: #{ticker_data['last']}")
-  rescue ActiveRecord::RecordInvalid => e
-    raise CoinjarApiClient::InvalidResponseError, "Invalid data for #{currency.symbol}: #{e.message}"
   end
 
   private
