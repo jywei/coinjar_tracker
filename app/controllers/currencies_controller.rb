@@ -50,7 +50,6 @@ class CurrenciesController < ApplicationController
   rescue ActiveRecord::RecordNotFound
     flash[:error] = "Currency not found"
     Rails.logger.error("Currency not found: #{params[:id]}")
-    
     redirect_to currencies_path
   end
 end

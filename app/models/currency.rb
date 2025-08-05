@@ -6,7 +6,7 @@ class Currency < ApplicationRecord
   validates :symbol, presence: true, format: { with: /\A[A-Z]{3,10}\z/ }
 
   scope :ordered, -> { order(:name) }
-  scope :with_latest_price, -> { 
+  scope :with_latest_price, -> {
     joins("LEFT JOIN price_snapshots latest ON latest.currency_id = currencies.id AND latest.captured_at = (
       SELECT MAX(captured_at) FROM price_snapshots WHERE currency_id = currencies.id
     )")

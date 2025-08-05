@@ -34,7 +34,7 @@ class PriceCaptureService
     # Can potentially use ports and adapters pattern to reduce coupling
     ticker_data = CoinjarApiClient.fetch_ticker(currency.symbol)
     create_price_snapshot(currency, ticker_data)
-    
+
     Rails.logger.info("Successfully captured price for #{currency.symbol}: #{ticker_data['last']}")
   end
 

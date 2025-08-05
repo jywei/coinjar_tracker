@@ -99,7 +99,7 @@ class CurrencyTest < ActiveSupport::TestCase
     eth = Currency.create!(name: "Test Ethereum", symbol: "TESTETH")
     btc = Currency.create!(name: "Test Bitcoin", symbol: "TESTBTC")
 
-    ordered_currencies = Currency.where(name: ["Test Bitcoin", "Test Ethereum"]).ordered
+    ordered_currencies = Currency.where(name: [ "Test Bitcoin", "Test Ethereum" ]).ordered
     assert_equal btc, ordered_currencies.first
     assert_equal eth, ordered_currencies.last
   end
