@@ -7,7 +7,9 @@ class CurrenciesController < ApplicationController
 
   def index
     @currencies = Rails.cache.fetch(PRICES_CACHE_KEY, expires_in: PRICES_CACHE_EXPIRATION) do
-      Currency.includes(:price_snapshots).ordered.map do |currency|
+      Currency.includes(:price_snapshots)
+              .ordered
+              .map do |currency|
         {
           currency: currency,
           latest_price: currency.latest_price
@@ -21,25 +23,23 @@ class CurrenciesController < ApplicationController
   end
 
   def capture_prices
-    begin
-      results = PriceCaptureService.capture_all
+    results = PriceCaptureService.capture_all
 
-      if results[:errors].any?
-        flash[:warning] = "Captured prices for #{results[:success].join(', ')}. Errors: #{results[:errors].map { |e| "#{e[:symbol]}: #{e[:error]}" }.join(', ')}"
-      else
-        flash[:notice] = "Successfully captured prices for all currencies"
-      end
-
-      Rails.cache.delete(PRICES_CACHE_KEY)
-      Currency.find_each do |currency|
-        Rails.cache.delete_matched([ "currency", currency.id, "snapshots", "*" ])
-      end
-
-    rescue StandardError => e
-      flash[:error] = "Failed to capture prices: #{e.message}"
-      Rails.logger.error("Price capture failed: #{e.message}")
+    if results[:errors].any?
+      flash[:warning] = "Captured prices for #{results[:success].join(', ')}. Errors: #{results[:errors].map { |e| "#{e[:symbol]}: #{e[:error]}" }.join(', ')}"
+    else
+      flash[:notice] = "Successfully captured prices for all currencies"
     end
 
+    Rails.cache.delete(PRICES_CACHE_KEY)
+    Currency.find_each do |currency|
+      Rails.cache.delete_matched([ "currency", currency.id, "snapshots", "*" ])
+    end
+
+    redirect_to currencies_path
+  rescue StandardError => e
+    flash[:error] = "Failed to capture prices: #{e.message}"
+    Rails.logger.error("Price capture failed: #{e.message}")
     redirect_to currencies_path
   end
 
@@ -50,7 +50,7 @@ class CurrenciesController < ApplicationController
   rescue ActiveRecord::RecordNotFound
     flash[:error] = "Currency not found"
     Rails.logger.error("Currency not found: #{params[:id]}")
-
+    
     redirect_to currencies_path
   end
 end
