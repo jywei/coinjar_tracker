@@ -1,184 +1,104 @@
 # CoinJar Price Tracker
 
-A Ruby on Rails web application that tracks and displays cryptocurrency prices from the CoinJar Exchange API. The application captures real-time prices for Bitcoin (BTC) and Ethereum (ETH) and provides a price history.
+A Rails application for tracking cryptocurrency prices from the CoinJar exchange API.
 
-## Features
+## Design Decisions & Architecture
 
-### Core Functionality
-- **Real-time Price Capture**: Fetch current prices from CoinJar Exchange API
-- **Price History**: View historical price data with pagination
-- **Price Details**: Display last, bid, ask prices with spread calculations
+### Database Design
+
+**Uniqueness Constraints at Database Level**
+- Added database-level unique indexes on `currencies.name` and `currencies.symbol` instead of relying solely on model validations
+- This ensures data integrity at the database level and prevents race conditions
+- Model validations remain for user feedback but database constraints are the source of truth
+
+**Indexing Strategy**
+- Added composite index on `price_snapshots(currency_id, captured_at)` for efficient latest price queries
+- Added index on `price_snapshots.captured_at` for time-based queries
+- These indexes optimize the most common query patterns: finding latest prices and filtering by time
+
+**Data Types & Constraints**
+- Used `decimal` with precision 20, scale 8 for price fields to handle cryptocurrency precision
+- Added `null: false` constraints to prevent invalid data
+- Foreign key constraints ensure referential integrity
 
 ### Performance Optimizations
-- **Caching**: Intelligent caching of currency lists and price data
-- **Pagination**: Efficient pagination for large datasets
-- **Error Handling**: Robust error handling for API failures
 
-### User Interface
-- **Responsive Design**: Bootstrap responsive UI
-- **Real-time Updates**: Capture button for immediate price updates
-- **Navigation**: Easy navigation between currencies and history
-- **Data Visualization**: Clear presentation of price data and trends
+**N+1 Query Prevention**
+- Used `includes(:price_snapshots)` in controllers to preload associations
+- Optimized `latest_price` method with `limit(1)` to reduce query complexity
+- Added `with_latest_price` scope for efficient bulk latest price queries
 
-## Technology Stack
+**Caching Strategy**
+- Implemented 1-minute cache for currency listings with latest prices
+- Cache invalidation on price capture to ensure data freshness
+- Used `Rails.cache.delete_matched` for targeted cache clearing
 
-- **Backend**: Ruby on Rails 8.0.2
-- **Database**: PostgreSQL
-- **Caching**: Rails.cache with solid_cache
-- **Pagination**: Kaminari
-- **Testing**: Minitest with WebMock for HTTP mocking
-- **Styling**: Bootstrap 5.3.0
+### Service Layer Design
 
-## API Integration
+**Error Handling Philosophy**
+- Replaced broad `StandardError` rescues with specific exception types
+- `CoinjarApiClient::ApiError` for HTTP/network issues
+- `CoinjarApiClient::InvalidResponseError` for malformed API responses
+- `ActiveRecord::RecordInvalid` for validation failures
+- This provides better error categorization and appropriate logging levels
 
-The application integrates with the CoinJar Exchange API:
-- **Endpoint**: `https://data.exchange.coinjar.com/products/{SYMBOL}/ticker`
-- **Supported Symbols**: BTCAUD, ETHAUD
-- **Data Captured**: last, bid, ask prices
-- **Error Handling**: Error handling for network issues, timeouts, and API errors
+**API Client Design**
+- Single responsibility: handles HTTP communication with CoinJar API
+- Comprehensive error handling for different HTTP status codes
+- Input validation for API responses
+- Timeout handling for network reliability
 
-## Installation & Setup
+**Price Capture Service**
+- Orchestrates the price capture process
+- Handles individual currency failures gracefully
+- Provides detailed error reporting
+- Maintains audit trail through logging
 
-### Prerequisites
-- Ruby 3.3.0 or higher
-- PostgreSQL
+### Testing Strategy
 
-### Local Development Setup
+**Transactional Testing**
+- Removed manual `destroy_all` calls in favor of Rails' automatic transaction rollback
+- Tests run in database transactions that are rolled back after each test
+- This ensures test isolation and faster test execution
 
-1. **Clone the repository**
-   ```bash
-   git clone <repository-url>
-   cd coinjar_tracker
-   ```
+**Test Organization**
+- Model tests focus on validations, associations, and business logic
+- Service tests verify external API integration
+- Controller tests ensure proper request handling and caching
 
-2. **Install dependencies**
-   ```bash
-   bundle install
-   ```
+### Code Quality
 
-3. **Database setup**
-   ```bash
-   bin/rails db:create
-   bin/rails db:migrate
-   bin/rails db:seed
-   ```
+**Validation Strategy**
+- Database constraints for data integrity
+- Model validations for user experience
+- Service-level validation for business rules
 
-4. **Start the server**
-   ```bash
-   bin/rails server
-   ```
+**Logging Strategy**
+- Different log levels for different types of errors
+- Structured error messages for debugging
+- Success logging for audit trails
 
-5. **Visit the application**
-   Open http://localhost:3000 in your browser
+## Setup
 
+1. Install dependencies: `bundle install`
+2. Setup database: `bin/rails db:setup`
+3. Start the server: `bin/rails server`
 
 ## Usage
 
-### Capturing Prices
-1. Navigate to the home page
-2. Click the "Capture Latest Prices" button
-3. The application will fetch current prices from CoinJar API
-4. View the updated prices in the table
+- View all currencies: `/currencies`
+- View currency details: `/currencies/:id`
+- Capture latest prices: `/currencies/capture_prices`
 
-### Viewing Price History
-1. Click "View History" for any currency
-2. View detailed price information including spreads
+## API Endpoints
 
-### All Price History
-1. Click "View All Price History" from the home page
-2. See all captured prices across all currencies
-3. Navigate through pages of historical data
+- `GET /currencies` - List all currencies with latest prices
+- `GET /currencies/:id` - Show currency details with price history
+- `POST /currencies/capture_prices` - Capture latest prices for all currencies
 
-## Testing
+## Performance Considerations
 
-The application includes comprehensive test coverage:
-
-### Running Tests
-```bash
-# Run all tests
-bin/rails test
-```
-
-### Test Coverage
-- **Model Tests**: Validations, associations, scopes, and methods
-- **Service Tests**: API integration, error handling, data processing
-- **Controller Tests**: HTTP responses, caching, pagination
-
-## Performance Features
-
-### Caching Strategy
-- **Currency List**: Cached with automatic invalidation
-- **Cache Invalidation**: Automatic cache clearing on price updates
-
-### Error Handling
-- **API Failures**: Graceful handling of network and API errors
-- **Partial Failures**: Continue processing when some currencies fail
-
-## Architecture Decisions
-
-### Service Layer Pattern
-- **PriceCaptureService**: Focuses on business logic for price capturing
-- **CoinjarApiClient**: Dedicated HTTP client for API calls
-- **Separation of Concerns**: Clear separation between API communication and business logic
-- **Error Handling**: Used custom error classes for clearer error logging
-
-## 🤖 AI Assistance
-
-This project was developed with the assistance of AI tools, specifically:
-
-### AI Tools Used
-- **Cursor.sh**: Primary development environment with AI assistance
-- **ChatGPT**: Code review, architecture suggestions, and problem-solving
-
-### AI Contributions
-- **Initial Scaffolding**: AI helped generate the basic Rails application structure
-- **Layout Styling**: AI helped building simple bootstrap layouts
-- **Testing Strategy**: AI helped design comprehensive test coverage
-
-## 🚀 Optional Enhancements (Not Implemented)
-
-The original challenge included several optional enhancements. I chose to implement **Performance Optimizations** (caching and pagination), but here are the other enhancements and how I would approach implementing them:
-
-### 1. Price Alerts
-**Description**: Allow users to set price thresholds and notify when crossed
-
-**Required Components**:
-- Database migration for `price_alerts` table
-- Alert creation/deletion/edition pages
-- Service to check alerts after price captures
-- Notifications like email or SMS (or push notification)
-
-### 2. Price Visualization
-**Description**: Add a simple chart showing price trends over time
-
-**Required Components**:
-- Chartkick gem https://github.com/ankane/chartkick integration
-
-### 3. Additional Currencies
-**Description**: Expand beyond BTC and ETH to include other cryptocurrencies
-
-**Required Components**:
-- Update seed data with more currencies
-- Rate limit if necessary
-
-### 4. Scheduled Updates
-**Description**: Add automated price captures at regular intervals
-
-**Required Components**:
-- Background job (Sidekiq or Active Job)
-- Cron scheduling with whenever gem https://github.com/javan/whenever
-
-### 5. Advanced Performance Optimizations
-**Description**: Implement additional caching and pagination improvements
-
-**Required Components**:
-- Redis server
-- Database index
-- Performance monitoring tools
-
-### Technical Considerations
-
-- **API Rate Limits**: CoinJar API has rate limits that need to be respected
-- **Data Storage**: Large datasets require careful database design
-- **Real-time Updates**: WebSocket integration for live price updates
-- **Mobile Responsiveness**: Charts and alerts need mobile-friendly design
+- Database indexes optimize common queries
+- Caching reduces database load
+- N+1 query prevention through proper includes
+- Efficient pagination for large datasets
