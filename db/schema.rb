@@ -10,15 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_03_031804) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_05_012840) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
   create_table "currencies", force: :cascade do |t|
-    t.string "name"
-    t.string "symbol"
+    t.string "name", null: false
+    t.string "symbol", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_currencies_on_name", unique: true
+    t.index ["symbol"], name: "index_currencies_on_symbol", unique: true
   end
 
   create_table "price_snapshots", force: :cascade do |t|
@@ -29,6 +31,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_03_031804) do
     t.datetime "captured_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["captured_at"], name: "index_price_snapshots_on_captured_at"
+    t.index ["currency_id", "captured_at"], name: "index_price_snapshots_on_currency_id_and_captured_at"
     t.index ["currency_id"], name: "index_price_snapshots_on_currency_id"
   end
 
